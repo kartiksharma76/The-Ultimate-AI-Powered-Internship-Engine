@@ -1,0 +1,10 @@
+This is a sample resume text document.
+
+Name: Kartik Sharma
+Role: Frontend Developer
+Skills: React, TypeScript, Node.js, Express, Tailwind CSS
+Experience: 1 year building web applications
+Projects: Internship Engine, AI Assistant Dashboard
+Education: B.Tech in Computer Science
+
+Please hire me!

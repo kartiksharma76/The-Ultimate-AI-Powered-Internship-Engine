@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "AI Internship Engine"
+version = "1.0.0"
+id = "artifacts/internship-engine"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22706
+
+[services.development]
+run = "pnpm --filter @workspace/internship-engine run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/internship-engine", "run", "build" ]
+publicDir = "artifacts/internship-engine/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22706"
+BASE_PATH = "/"

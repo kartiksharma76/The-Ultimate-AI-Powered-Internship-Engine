@@ -1,0 +1,637 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: AI-Powered Internship Recommendation Engine API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: students
+    description: Student profile operations
+  - name: internships
+    description: Internship listing operations
+  - name: recommendations
+    description: AI recommendation operations
+  - name: skillgap
+    description: Skill gap analysis operations
+  - name: analytics
+    description: Dashboard analytics operations
+  - name: auth
+    description: Authentication operations
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /students:
+    post:
+      operationId: createStudent
+      tags: [students]
+      summary: Create a student profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStudentBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+    get:
+      operationId: listStudents
+      tags: [students]
+      summary: List all students
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Student"
+
+  /students/{id}:
+    get:
+      operationId: getStudent
+      tags: [students]
+      summary: Get student by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "404":
+          description: Not found
+    put:
+      operationId: updateStudent
+      tags: [students]
+      summary: Update a student profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStudentBody"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+  /internships:
+    get:
+      operationId: listInternships
+      tags: [internships]
+      summary: List internships with optional filters
+      parameters:
+        - name: domain
+          in: query
+          schema:
+            type: string
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Internship"
+    post:
+      operationId: createInternship
+      tags: [internships]
+      summary: Create an internship listing (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInternshipBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Internship"
+
+  /internships/{id}:
+    get:
+      operationId: getInternship
+      tags: [internships]
+      summary: Get internship by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Internship"
+    put:
+      operationId: updateInternship
+      tags: [internships]
+      summary: Update an internship
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInternshipBody"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Internship"
+    delete:
+      operationId: deleteInternship
+      tags: [internships]
+      summary: Delete an internship
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /recommendations/{studentId}:
+    get:
+      operationId: getRecommendations
+      tags: [recommendations]
+      summary: Get AI-powered ranked internship recommendations for a student
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecommendationResult"
+
+  /recommendations/{studentId}/career-paths:
+    get:
+      operationId: getCareerPaths
+      tags: [recommendations]
+      summary: Get AI-generated career path recommendations for a student
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CareerPath"
+
+  /skillgap/{studentId}:
+    get:
+      operationId: getSkillGap
+      tags: [skillgap]
+      summary: Analyze skill gaps for a student's desired roles
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SkillGapAnalysis"
+
+  /analytics/dashboard:
+    get:
+      operationId: getDashboardAnalytics
+      tags: [analytics]
+      summary: Get dashboard-level analytics and statistics
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardAnalytics"
+
+  /analytics/domains:
+    get:
+      operationId: getDomainStats
+      tags: [analytics]
+      summary: Get internship count grouped by domain
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DomainStat"
+
+  /analytics/top-skills:
+    get:
+      operationId: getTopSkills
+      tags: [analytics]
+      summary: Get most in-demand skills across all internships
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SkillStat"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "401":
+          description: Unauthorized
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout the current user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    Student:
+      type: object
+      required: [id, name, email, skills, domains, experienceLevel, location, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+        domains:
+          type: array
+          items:
+            type: string
+        experienceLevel:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        location:
+          type: string
+        bio:
+          type: string
+        careerGoals:
+          type: string
+        googleId:
+          type: string
+        avatarUrl:
+          type: string
+        createdAt:
+          type: string
+
+    CreateStudentBody:
+      type: object
+      required: [name, email, skills, domains, experienceLevel, location]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+        domains:
+          type: array
+          items:
+            type: string
+        experienceLevel:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        location:
+          type: string
+        bio:
+          type: string
+        careerGoals:
+          type: string
+
+    UpdateStudentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+        domains:
+          type: array
+          items:
+            type: string
+        experienceLevel:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        location:
+          type: string
+        bio:
+          type: string
+        careerGoals:
+          type: string
+
+    Internship:
+      type: object
+      required: [id, title, company, domain, location, requiredSkills, description, duration, stipend, applicationDeadline, popularity, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        company:
+          type: string
+        domain:
+          type: string
+        location:
+          type: string
+        requiredSkills:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        duration:
+          type: string
+        stipend:
+          type: string
+        applicationDeadline:
+          type: string
+        popularity:
+          type: integer
+        createdAt:
+          type: string
+
+    CreateInternshipBody:
+      type: object
+      required: [title, company, domain, location, requiredSkills, description, duration, stipend, applicationDeadline]
+      properties:
+        title:
+          type: string
+        company:
+          type: string
+        domain:
+          type: string
+        location:
+          type: string
+        requiredSkills:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        duration:
+          type: string
+        stipend:
+          type: string
+        applicationDeadline:
+          type: string
+        popularity:
+          type: integer
+
+    RecommendationResult:
+      type: object
+      required: [internship, score, skillMatchScore, interestScore, locationScore, popularityScore, matchedSkills, missingSkills, aiInsight]
+      properties:
+        internship:
+          $ref: "#/components/schemas/Internship"
+        score:
+          type: number
+        skillMatchScore:
+          type: number
+        interestScore:
+          type: number
+        locationScore:
+          type: number
+        popularityScore:
+          type: number
+        matchedSkills:
+          type: array
+          items:
+            type: string
+        missingSkills:
+          type: array
+          items:
+            type: string
+        aiInsight:
+          type: string
+
+    CareerPath:
+      type: object
+      required: [title, description, requiredSkills, timelineMonths, matchScore, steps]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        requiredSkills:
+          type: array
+          items:
+            type: string
+        timelineMonths:
+          type: integer
+        matchScore:
+          type: number
+        steps:
+          type: array
+          items:
+            type: string
+
+    SkillGapAnalysis:
+      type: object
+      required: [studentId, currentSkills, targetRoles, skillGaps, recommendations]
+      properties:
+        studentId:
+          type: integer
+        currentSkills:
+          type: array
+          items:
+            type: string
+        targetRoles:
+          type: array
+          items:
+            type: string
+        skillGaps:
+          type: array
+          items:
+            $ref: "#/components/schemas/SkillGap"
+        recommendations:
+          type: array
+          items:
+            type: string
+
+    SkillGap:
+      type: object
+      required: [skill, priority, resources]
+      properties:
+        skill:
+          type: string
+        priority:
+          type: string
+          enum: [high, medium, low]
+        resources:
+          type: array
+          items:
+            type: string
+
+    DashboardAnalytics:
+      type: object
+      required: [totalStudents, totalInternships, totalRecommendationsGenerated, avgMatchScore, recentActivity]
+      properties:
+        totalStudents:
+          type: integer
+        totalInternships:
+          type: integer
+        totalRecommendationsGenerated:
+          type: integer
+        avgMatchScore:
+          type: number
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityItem"
+
+    ActivityItem:
+      type: object
+      required: [type, description, timestamp]
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        timestamp:
+          type: string
+
+    DomainStat:
+      type: object
+      required: [domain, count]
+      properties:
+        domain:
+          type: string
+        count:
+          type: integer
+
+    SkillStat:
+      type: object
+      required: [skill, count]
+      properties:
+        skill:
+          type: string
+        count:
+          type: integer

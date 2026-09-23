@@ -1,61 +1,111 @@
-# 🚀 InternAI: The Ultimate AI-Powered Internship Engine
+# 🚀 The Ultimate AI-Powered Internship Engine
 
-**InternAI** is a high-fidelity, end-to-end internship discovery and assessment platform designed to bridge the gap between talent and opportunity. Powered by **NVIDIA Llama 3.1 AI**, it automates the entire recruitment lifecycle—from resume analysis and skill-based assessments to voice-driven mock interviews and automated candidate shortlisting.
+<div align="center">
 
----
+[![GitHub stars](https://img.shields.io/github/stars/kartiksharma76/The-Ultimate-AI-Powered-Internship-Engine?style=for-the-badge&color=blue)](https://github.com/kartiksharma76/The-Ultimate-AI-Powered-Internship-Engine/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/kartiksharma76/The-Ultimate-AI-Powered-Internship-Engine?style=for-the-badge&color=indigo)](https://github.com/kartiksharma76/The-Ultimate-AI-Powered-Internship-Engine/network)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![NVIDIA AI](https://img.shields.io/badge/NVIDIA_NIM-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](https://build.nvidia.com)
 
-## 🌟 Key Features (8 Advanced AI Modules)
+**An intelligent, end-to-end AI career accelerator and recruitment ecosystem for modern students and recruiters.**
 
-### 1. 🎙️ Jarvis Mock Interview
-An immersive, two-way voice communication environment. Jarvis asks technical questions using **Speech Synthesis (TTS)** and analyzes user responses via **Speech Recognition (STT)**, while simultaneously tracking facial confidence and expressions.
+[Explore Live Demo](#-getting-started) • [Key Features](#-supercharged-features) • [Architecture](#-tech-stack--architecture) • [Setup Guide](#-setup--installation)
 
-### 2. 🧠 Adaptive AI Assessments
-Generates personalized **Coding Problems** and **Technical MCQs** in real-time based on the student's unique skill profile. No two tests are ever the same.
-
-### 3. 🚨 Real-time Fraud Detection
-Advanced proctoring sensors that detect **Browser Tab Switching** and **Copy-Paste events**. Any suspicious activity is instantly flagged for recruiter review with a high-visibility warning bar.
-
-### 4. 📊 Recruiter Smart Dashboard
-A "Central Control" hub where recruiters can see **Neural Candidate Rankings**. Candidates are sorted by an AI score that combines GitHub metrics, assessment accuracy, and ATS profile matching.
-
-### 5. 🏆 Global Leaderboards & Gamification
-A premium, animated leaderboard that ranks students globally. Earn **XP** and unlock **Badges** by completing assessments and maintaining coding streaks.
-
-### 6. 📂 AI Resume Analyzer
-Instant skill extraction and bio generation from uploaded resumes. Provides actionable feedback on how to improve your profile for specific roles.
-
-### 7. 💻 GitHub Synchronization
-Synchronize your developer profile to get an **AI Developer Rank**. The system analyzes commits, repositories, and languages to calculate your technical contribution score.
-
-### 8. 🌐 Multi-Language Foundation
-Built-in AI translation UI supporting multiple languages (English, Hindi, Bengali) for a truly global reach.
+</div>
 
 ---
 
-## 🛠️ Tech Stack
+## 📖 Overview
 
-- **Frontend**: React (Vite), Tailwind CSS, Framer Motion (for premium animations).
-- **Backend**: Node.js (Express), TypeScript.
-- **AI Engine**: NVIDIA Llama 3.1-8B (via NVIDIA NIM), Web Speech API.
-- **Database**: MySQL with Drizzle ORM for high-performance data persistence.
-- **State Management**: React Query & Context API.
+**The Ultimate AI-Powered Internship Engine** (InternAI) bridges the gap between ambitious students and high-growth opportunities. Driven by **NVIDIA Llama 3.1 AI Models**, the platform automates the entire recruitment and upskilling lifecycle:
 
----
-
-## 📸 UI Showcase
-
-| Recruiter Dashboard | Global Leaderboard |
-|:---:|:---:|
-| ![Admin Ranking](https://raw.githubusercontent.com/kartiksharma76/Ai-internship-Hackathon-2026/main/admin_ranking.png) | ![Leaderboard UI](https://raw.githubusercontent.com/kartiksharma76/Ai-internship-Hackathon-2026/main/leaderboard_ui.png) |
+- Real-time voice & video AI mock interviews with simulated high-pressure personas.
+- Smart ATS resume analysis, gap detection, and personalized bullet generation.
+- Dynamic coding assessments with automated fraud detection and proctoring.
+- Recruiter smart dashboards with neural applicant scoring and global talent heatmaps.
+- Salary benchmarking, visa intelligence, and negotiation simulations.
 
 ---
 
-## 🚀 Getting Started
+## ✨ Supercharged Features
 
-### 1. Clone the repository
+### 🎙️ 1. AI Interview Ghost & Jarvis Voice Room
+- **Voice-to-Voice AI Interviewer**: Powered by Speech Recognition (STT) and Speech Synthesis (TTS).
+- **Adaptive Personas**: Choose between friendly HR mentors or brutal Tier-1 system design interviewers.
+- **Instant Behavioral & Technical Feedback**: AI critiques answers in real-time with score breakdowns.
+
+### 📄 2. AI Resume Architect & ATS Analyzer
+- **ATS Compatibility Scoring**: Instant scoring against modern applicant tracking systems.
+- **Skill Extraction & Match Engine**: Maps resume bullet points to active internship job descriptions.
+- **AI Bullet Enhancer**: Rewrites weak accomplishments into impactful, metric-driven statements.
+
+### ⚡ 3. Career Multiplier & Interactive Skill Graph
+- **Career Path Forecasting**: Visual career trajectory models and skill ladder diagnostics.
+- **Skill Gap Diagnostics**: Identifies high-value missing competencies for desired roles.
+- **Curated Learning Roadmaps**: Auto-generated actionable study paths to close skill gaps.
+
+### 💻 4. Code Architect & AI Assessments
+- **Adaptive Problem Generation**: Dynamic coding challenges tailored to the candidate's exact skill level.
+- **Live Code Mentor**: Real-time syntax and algorithmic architectural advice.
+- **Anti-Cheat Proctoring**: Monitors browser tab switching, paste events, and suspicious patterns.
+
+### 🤝 5. Alumni Hub, Mentorship & Network Engine
+- **Mentor Matching**: Connects students with vetted industry alumni.
+- **Referral Network**: Direct referral pipelines between companies and top-ranked candidates.
+- **Community Events Hub**: Hackathons, webinars, and networking meetups tracker.
+
+### 📊 6. Market Intelligence & Recruiter Hub
+- **Neural Candidate Ranking**: Multi-factor candidate scoring (GitHub contributions + Assessment scores + ATS match).
+- **Salary Benchmarker & Negotiation Sim**: Real-time compensation insights and interactive negotiation practice.
+- **Global Talent Heatmap & Visa Intelligence**: Geolocation talent distribution and international visa sponsorship insights.
+- **Burnout & Psych Lab**: Predictive wellbeing indicators and work-style compatibility profiling.
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+```
+                                  ┌────────────────────────┐
+                                  │   React 18 + Vite UI   │
+                                  │  (Tailwind + Radix UI) │
+                                  └───────────┬────────────┘
+                                              │ REST API / WebSockets
+                                  ┌───────────▼────────────┐
+                                  │ Express.js API Server  │
+                                  │      (TypeScript)      │
+                                  └─────┬────────────┬─────┘
+                     ┌──────────────────┘            └──────────────────┐
+                     ▼                                                  ▼
+       ┌────────────────────────┐                         ┌────────────────────────┐
+       │   NVIDIA NIM Llama 3   │                         │  MySQL + Drizzle ORM   │
+       │   (GenAI Engine)       │                         │ (Persistence Layer)    │
+       └────────────────────────┘                         └────────────────────────┘
+```
+
+| Component | Technologies Used |
+| :--- | :--- |
+| **Frontend** | React 18, Vite, TypeScript, Tailwind CSS, Lucide Icons, Radix UI, Framer Motion |
+| **Backend** | Node.js, Express, TypeScript, Zod Validation, OpenAPI / Orval |
+| **AI / ML** | NVIDIA NIM API (`meta/llama-3.1-8b-instruct`), Web Speech API (STT / TTS) |
+| **Database** | MySQL, Drizzle ORM, Drizzle Kit |
+| **Auth & Security** | Google OAuth 2.0, Firebase Auth, Session-based authentication |
+| **Integrations** | Razorpay SDK, Nodemailer SMTP |
+
+---
+
+## 🚀 Setup & Installation
+
+### Prerequisites
+- **Node.js**: v18.0 or higher
+- **pnpm**: `npm install -g pnpm`
+- **MySQL**: Local instance or cloud database (e.g. PlanetScale, Neon, Railway)
+
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/internship-engine-project.git
-cd internship-engine-project
+git clone https://github.com/kartiksharma76/The-Ultimate-AI-Powered-Internship-Engine.git
+cd The-Ultimate-AI-Powered-Internship-Engine
 ```
 
 ### 2. Install Dependencies
@@ -63,24 +113,102 @@ cd internship-engine-project
 pnpm install
 ```
 
-### 3. Configure Environment Variables
+### 3. Setup Environment Variables
 Create a `.env` file in the root directory:
+
 ```env
-DATABASE_URL=mysql://user:pass@localhost:3306/db
-NVIDIA_API_KEY=your_nvidia_api_key
-GOOGLE_CLIENT_ID=your_google_id
+# Database Configuration
+DATABASE_URL=mysql://username:password@localhost:3306/internship_db
+
+# Ports & URLs
+PORT=3000
+BACKEND_PORT=8080
+BASE_PATH=/
+FRONTEND_URL=http://localhost:5173
+
+# AI Service (NVIDIA NIM)
+NVIDIA_API_KEY=your_nvidia_nim_api_key
+
+# Authentication
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+SESSION_SECRET=your_secure_session_secret_key
+
+# Payments (Razorpay)
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+
+# Email Service (SMTP)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
 ```
 
-### 4. Run the Platform
+### 4. Database Setup
+```bash
+# Push schema migrations
+pnpm run db:push
+
+# (Optional) Seed dummy internships & candidate data
+pnpm run db:seed
+```
+
+### 5. Launch Development Server
 ```bash
 pnpm run dev
 ```
 
+The application will be accessible at:
+- **Frontend App**: `http://localhost:5173`
+- **API Server**: `http://localhost:8080`
+
 ---
 
-## 📄 License
-Distributed under the MIT License. See `LICENSE` for more information.
+## 📂 Project Structure
+
+```
+├── artifacts/
+│   ├── api-server/             # Express.js backend & AI routes
+│   │   └── src/routes/         # AI, assessment, candidate, & payment endpoints
+│   └── internship-engine/      # React Vite frontend application
+│       └── src/pages/          # All 25+ frontend feature pages
+├── lib/
+│   ├── api-client-react/       # Generated React Query API hooks
+│   ├── api-spec/               # OpenAPI / Swagger specification
+│   ├── api-zod/                # Zod schemas for validation
+│   └── db/                     # Drizzle schema definitions & DB migrations
+├── package.json
+└── README.md
+```
 
 ---
 
-Developed with ❤️ for the **AI Internship Hackathon 2026**.
+## 🔒 Security & Privacy Best Practices
+
+- **Strict Environment Isolation**: API keys and database credentials are fully isolated in `.env` (enforced via `.gitignore`).
+- **No Client Key Exposure**: AI prompts, payments, and authentication are executed securely on the backend server.
+- **Proctoring Integrity**: Real-time client-side event listeners track assessment validity without saving sensitive screen data.
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'feat: Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📜 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ by <b>Kartik Sharma</b></sub>
+</div>

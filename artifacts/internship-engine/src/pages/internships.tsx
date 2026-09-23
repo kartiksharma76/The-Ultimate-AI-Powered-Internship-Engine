@@ -123,8 +123,28 @@ export default function InternshipsPage() {
 
     fetchInternships(isGlobalDiscovery, controller.signal);
 
-    return () => controller.abort();
-  }, [domain, experience, salary, debouncedSearch, debouncedLocation]);
+    // Real-time sync interval
+    const interval = setInterval(() => {
+      fetchInternships(isGlobalDiscovery);
+    }, 60000);
+
+    return () => {
+      controller.abort();
+      clearInterval(interval);
+    };
+  }, [domain, experience, salary, debouncedSearch, debouncedLocation, isGlobalDiscovery]);
+  
+  // Auto-apply logic for incoming redirects
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const applyId = params.get("apply");
+    if (applyId && internships.length > 0 && !selectedInternship) {
+      const internship = internships.find(i => i.id.toString() === applyId);
+      if (internship) {
+        handleGenerateApplication({ preventDefault: () => {}, stopPropagation: () => {} } as any, internship);
+      }
+    }
+  }, [internships, selectedInternship]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

@@ -8,6 +8,4 @@ The system should also include additional intelligent features such as a skill g
 
 Ensure the application follows best practices such as clean code architecture, modular design, proper exception handling, and API documentation using Swagger. The system should be deployable on cloud platforms like Render or Railway, with the database hosted on services such as PlanetScale or Neon. The final solution should demonstrate how AI-driven personalization can significantly improve internship discovery and application success rates compared to traditional generic job portals.    API USE NVIDIA 
 
-THE API KEY IS
-
-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
+THE API KEY IS SET IN .env (NVIDIA_API_KEY)

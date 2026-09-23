@@ -14,7 +14,10 @@ import {
 } from "recharts";
 import { getScoreBg, getDomainColor, formatDate, cn } from "@/lib/utils";
 import { useActiveStudent } from "@/components/Layout";
-import { Activity, LayoutDashboard, Target, Users, Zap, Award, BookOpen, ChevronRight, TrendingUp, Briefcase, CheckCircle2, Clock, ExternalLink, Bell, MessageSquare, Sparkles } from "lucide-react";
+import { Activity, LayoutDashboard, Target, Users, Zap, Award, BookOpen, ChevronRight, TrendingUp, Briefcase, CheckCircle2, Clock, ExternalLink, Bell, MessageSquare, Sparkles, ShieldCheck, Globe, Component, Ghost, Scale, Heart, Network } from "lucide-react";
+import TalentHeatmap from "@/components/TalentHeatmap";
+import CareerMultiplier from "@/components/CareerMultiplier";
+import CodeMentor from "@/components/CodeMentor";
 
 const COLORS = ["#7c3aed", "#6366f1", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6"];
 
@@ -57,33 +60,35 @@ export default function DashboardPage() {
   const { data: applications, isLoading: appsLoading } = useQuery({
     queryKey: ["applications", studentId],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:8080/api/applications/student/${studentId}`);
+      const res = await fetch(`/api/applications/student/${studentId}`);
       if (!res.ok) throw new Error("Failed to fetch applications");
       return res.json() as Promise<any[]>;
     },
     enabled: !!studentId,
+    refetchInterval: 30000, // 30s real-time sync
   });
 
   // Fetch Real Notifications
   const { data: notifications, refetch: refetchNotifications } = useQuery({
     queryKey: ["notifications", studentId],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:8080/api/notifications/${studentId}`);
+      const res = await fetch(`/api/notifications/${studentId}`);
       if (!res.ok) throw new Error("Failed to fetch notifications");
       return res.json() as Promise<any[]>;
     },
     enabled: !!studentId,
+    refetchInterval: 15000, // 15s for critical notifications
   });
 
   const markAsRead = async (id: number) => {
-    await fetch(`http://localhost:8080/api/notifications/${id}/read`, { method: "PATCH" });
+    await fetch(`/api/notifications/${id}/read`, { method: "PATCH" });
     refetchNotifications();
   };
 
   useEffect(() => {
     if (notifications && notifications.length === 0 && studentId) {
       // Simulate a notification for demonstration
-      fetch("http://localhost:8080/api/notifications/simulate", {
+      fetch("/api/notifications/simulate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -126,7 +131,84 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 relative">
       <div className="fixed inset-0 pointer-events-none opacity-[0.3] mesh-gradient -z-10" />
-      
+
+      {/* Premium Member Gold Card */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative mb-12 p-1 overflow-hidden rounded-[3rem] group"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-200 via-yellow-500 to-amber-200 animate-gradient bg-[length:200%_auto] opacity-20 group-hover:opacity-40 transition-opacity" />
+        <div className="relative glass-card rounded-[2.8rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border-yellow-500/30 overflow-hidden">
+          <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-yellow-500/10 rounded-full blur-[100px] pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col gap-4 max-w-2xl text-center md:text-left">
+            <div className="inline-flex items-center gap-2 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full border border-yellow-500/20 w-fit mx-auto md:mx-0">
+              <Sparkles className="w-3 h-3 fill-current" />
+              InternAI Gold Member
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+              Unlock the <span className="text-yellow-600 dark:text-yellow-500 italic">Elite</span> <br/>Career Pipeline
+            </h2>
+            <p className="text-muted-foreground font-medium text-lg leading-relaxed">
+              Your profile is currently outperforming <span className="text-foreground font-black">92%</span> of applicants in <span className="text-primary font-bold">Cloud Engineering</span>. Premium members get 3x more direct recruiter callbacks.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center md:justify-start mt-4">
+              <Link href="/pricing">
+                <button className="px-5 py-2.5 bg-yellow-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-yellow-500/30 hover:scale-105 transition-all">
+                  Upgrade to Gold
+                </button>
+              </Link>
+              <Link href="/pricing">
+                <button className="px-5 py-2.5 bg-muted/50 rounded-2xl font-black uppercase tracking-widest text-[10px] border border-border/50 hover:bg-muted transition-all">
+                  View Benefits
+                </button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="relative z-10 grid grid-cols-2 gap-4 w-full md:w-auto shrink-0">
+            {[
+              { label: "AI MATCHING", val: "98%", color: "text-yellow-600" },
+              { label: "PRIORITY", val: "TOP 1%", color: "text-primary" },
+              { label: "REACH", val: "GLOBAL", color: "text-accent" },
+              { label: "STATUS", val: "ACTIVE", color: "text-emerald-500" },
+            ].map((stat, i) => (
+              <div key={i} className="p-4 bg-muted/30 backdrop-blur-md rounded-3xl border border-border/50 text-center min-w-[120px]">
+                <div className={cn("text-xl font-black mb-1", stat.color)}>{stat.val}</div>
+                <div className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-60">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Live Ecosystem Ticker */}
+      <div className="mb-12 relative overflow-hidden bg-muted/30 backdrop-blur-sm border-y border-border/50 py-3">
+        <div className="flex items-center gap-12 animate-marquee whitespace-nowrap px-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex items-center gap-12">
+              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                <Target className="w-3.5 h-3.5 text-primary" />
+                <span className="text-foreground">New Matching Engine:</span> 4.2k Internships Ranked This Hour
+              </span>
+              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                <Users className="w-3.5 h-3.5 text-accent" />
+                <span className="text-foreground">Live Community:</span> 1,240 Students Active
+              </span>
+              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                <Award className="w-3.5 h-3.5 text-emerald-500" />
+                <span className="text-foreground">Placement Alert:</span> Kartik S. just secured an Internship at NVIDIA
+              </span>
+              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                <Sparkles className="w-3.5 h-3.5 text-violet-500" />
+                <span className="text-foreground">AI Insight:</span> Web3 opportunities up 14% this month
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
           <div className="flex items-center gap-3 mb-2">
@@ -135,7 +217,7 @@ export default function DashboardPage() {
             </div>
             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Intelligence Center</h4>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2">Platform <span className="text-gradient">Insights</span></h1>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2">Intelligence <span className="text-gradient">Core</span></h1>
           {student && (
             <p className="text-muted-foreground font-medium">
               Welcome back, <span className="text-foreground font-black">{student.name}</span>. Here is your ecosystem snapshot.
@@ -143,22 +225,22 @@ export default function DashboardPage() {
           )}
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex -space-x-3">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full border-4 border-background bg-muted flex items-center justify-center overflow-hidden">
-                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`} alt="avatar" />
-              </div>
-            ))}
-            <div className="w-10 h-10 rounded-full border-4 border-background bg-primary flex items-center justify-center text-[10px] font-black text-white">
-              +12
+          <div className="hidden lg:flex flex-col items-end gap-1 px-4 border-r border-border/50">
+            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Skill Progression</span>
+            <div className="flex gap-1.5">
+              {[70, 45, 90].map((w, i) => (
+                <div key={i} className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div className={cn("h-full rounded-full transition-all duration-1000", i === 0 ? "bg-primary" : i === 1 ? "bg-accent" : "bg-emerald-500")} style={{ width: `${w}%` }} />
+                </div>
+              ))}
             </div>
           </div>
-          <div className="h-10 w-[1px] bg-border mx-2" />
           <button className="px-6 py-3 bg-foreground text-background rounded-2xl font-black uppercase tracking-widest text-[10px] hover:scale-105 transition-all shadow-xl">
-            Export Data
+            Export Intelligence
           </button>
         </div>
       </div>
+
 
       {/* Real-time AI Notification Engine */}
       <AnimatePresence>
@@ -389,41 +471,70 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Personalized AI Matcher */}
-        <div className="glass-card rounded-[2.5rem] p-8 border-primary/20 bg-primary/5">
+      {/* AI Command Center - Advanced Intelligence Suite */}
+      <div className="grid lg:grid-cols-3 gap-8 mb-12">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <TalentHeatmap />
+        </motion.div>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <CareerMultiplier />
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <CodeMentor />
+        </motion.div>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-8 mb-12">
+        <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
-              AI Skill Matcher (For You)
-            </h3>
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => refetchRecs()}
-                className="p-2 hover:bg-primary/10 rounded-xl transition-all text-primary"
-                title="Refresh Recommendations"
-              >
-                <Zap className="w-3.5 h-3.5" />
-              </button>
-              <div className="px-2 py-1 bg-primary/20 text-primary text-[8px] font-black rounded-lg animate-pulse">LIVE AI</div>
+            <div>
+              <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2 mb-1">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Adaptive Learning
+              </h3>
+              <h2 className="text-3xl font-black tracking-tight">AI Matching <span className="text-primary">Ecosystem</span></h2>
             </div>
+            <Link href="/internships">
+              <button className="text-xs font-black uppercase tracking-widest text-primary hover:underline transition-all">
+                View All Matches
+              </button>
+            </Link>
           </div>
-          <div className="space-y-4">
-            {recommendations && recommendations.length > 0 ? (
-              recommendations.filter(r => r.score > 10).slice(0, 5).map((rec, i) => (
-                <motion.div
-                  key={rec.internship.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            {recommendations && (recommendations as any[]).length > 0 ? (
+              (recommendations as any[]).slice(0, 4).map((rec: any, i: number) => (
+                <motion.div 
+                  key={rec.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="p-5 rounded-3xl bg-background border-2 border-primary/10 hover:border-primary shadow-xl shadow-primary/5 transition-all group"
+                  whileHover={{ y: -5 }}
+                  className="glass-card p-6 rounded-[2.5rem] border-primary/10 hover:border-primary/40 transition-all relative group"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className={cn("text-xs font-black px-4 py-2 rounded-2xl", getScoreBg(rec.score))}>
-                      {rec.score}% COMPATIBILITY
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="w-12 h-12 rounded-2xl bg-muted overflow-hidden border border-border/50 group-hover:scale-110 transition-transform">
+                      <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${rec.internship.company}`} alt={rec.internship.company} />
                     </div>
-                    <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black">
-                      #{i + 1}
+                    <div className="flex flex-col items-end">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">{rec.matchReason === 'skill_match' ? 'Skill Perfect' : 'Domain Fit'}</div>
+                      <div className="px-2.5 py-1 bg-primary/10 text-primary text-[10px] font-black rounded-lg">Score: {rec.matchScore}%</div>
                     </div>
                   </div>
                   <h4 className="font-black text-lg mb-1 leading-tight">{rec.internship.title}</h4>
@@ -445,6 +556,46 @@ export default function DashboardPage() {
                 <p className="text-xs font-bold text-muted-foreground">Complete your profile to unlock AI Matching</p>
               </div>
             )}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <Zap className="w-4 h-4 text-accent" />
+              Rapid Insights
+            </h3>
+          </div>
+          
+          <div className="space-y-4">
+            {[
+              { title: "Skill Trend", val: "Python +22%", icon: TrendingUp, color: "text-primary" },
+              { title: "Market Need", val: "Rust rising", icon: Globe, color: "text-accent" },
+              { title: "Profile Rank", val: "Top 4%", icon: Target, color: "text-emerald-500" },
+            ].map((insight, i) => (
+              <div key={i} className="p-5 bg-muted/30 border border-border/50 rounded-[2rem] flex items-center justify-between hover:bg-muted/50 transition-all cursor-default group">
+                <div className="flex items-center gap-4">
+                  <div className={cn("p-2 bg-background rounded-xl border border-border group-hover:scale-110 transition-transform", insight.color)}>
+                    <insight.icon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{insight.title}</div>
+                    <div className="text-sm font-bold">{insight.val}</div>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:translate-x-1 transition-all" />
+              </div>
+            ))}
+            
+            <div className="p-8 bg-foreground text-background rounded-[2.5rem] mt-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
+                <ShieldCheck className="w-16 h-16" />
+              </div>
+              <h4 className="text-xl font-black leading-tight mb-4 relative z-10">Generate <br/>System Report</h4>
+              <button className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all relative z-10">
+                Execute
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -477,7 +628,55 @@ export default function DashboardPage() {
           </div>
         ) : null}
 
-        {/* Quick Actions Grid */}
+        {/* Global Intelligence Suite - 10 Core Modules */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2 mb-1">
+              <Zap className="w-4 h-4 text-primary" />
+              Intelligence Command
+            </h3>
+            <h2 className="text-3xl font-black tracking-tight">Global <span className="text-primary">Intelligence</span> Suite</h2>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full border border-primary/20">
+             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+             System Synchronized
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {[
+            { href: "/talent-scout", label: "Talent Scout", icon: Users, color: "from-blue-500/10 to-blue-600/10", border: "border-blue-500/20" },
+            { href: "/project-architect", label: "Project Architect", icon: Component, color: "from-violet-500/10 to-violet-600/10", border: "border-violet-500/20" },
+            { href: "/skill-graph", label: "Skill Graph 3D", icon: Network, color: "from-indigo-500/10 to-indigo-600/10", border: "border-indigo-500/20" },
+            { href: "/market-sentiment", label: "Market Sentiment", icon: TrendingUp, color: "from-emerald-500/10 to-emerald-600/10", border: "border-emerald-500/20" },
+            { href: "/interview-ghost", label: "Interview Ghost", icon: Ghost, color: "from-slate-800/10 to-slate-900/10", border: "border-slate-800/20" },
+            { href: "/portfolio-optimizer", label: "Portfolio Audit", icon: LayoutDashboard, color: "from-cyan-500/10 to-cyan-600/10", border: "border-cyan-500/20" },
+            { href: "/legal-assistant", label: "Legal AI", icon: Scale, color: "from-slate-500/10 to-slate-600/10", border: "border-slate-500/20" },
+            { href: "/diversity-insights", label: "Cultural DEI", icon: Heart, color: "from-rose-500/10 to-rose-600/10", border: "border-rose-500/20" },
+            { href: "/burnout-predictor", label: "Burnout AI", icon: Activity, color: "from-amber-500/10 to-amber-600/10", border: "border-amber-500/20" },
+            { href: "/alumni-hub", label: "Alumni Circle", icon: Globe, color: "from-primary/10 to-accent/10", border: "border-primary/20" },
+          ].map((item, i) => (
+            <Link key={item.href} href={item.href}>
+              <motion.div
+                whileHover={{ y: -5, scale: 1.02 }}
+                className={cn(
+                  "p-5 rounded-[2rem] border bg-gradient-to-br transition-all flex flex-col items-center text-center group cursor-pointer",
+                  item.color,
+                  item.border
+                )}
+              >
+                <div className="w-12 h-12 bg-background rounded-2xl flex items-center justify-center mb-4 shadow-sm group-hover:rotate-12 transition-transform">
+                  <item.icon className="w-6 h-6 text-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <div className="text-[10px] font-black uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">{item.label}</div>
+              </motion.div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick Actions Grid */}
         <div className="grid grid-cols-2 gap-4">
           {[
             { label: "My Matches", href: `/recommendations/${studentId}`, color: "bg-primary shadow-primary/20", icon: Target },

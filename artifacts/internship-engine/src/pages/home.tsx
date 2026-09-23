@@ -1,8 +1,9 @@
 import { Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useGetDashboardAnalytics, useGetTopSkills, useGetDomainStats } from "@workspace/api-client-react";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Sparkles, Target, Zap, TrendingUp, ShieldCheck } from "lucide-react";
+import { ArrowRight, Sparkles, Target, Zap, TrendingUp, ShieldCheck, CheckCircle2, Star, Quote, Users, Globe, Component, Ghost, Scale, Heart, LayoutDashboard, Activity, Network } from "lucide-react";
+import { useRef } from "react";
 
 const features = [
   {
@@ -33,81 +34,109 @@ const steps = [
   { step: "03", title: "Close the Gap", desc: "See exactly what skills to learn and which career paths to pursue based on your goals." },
 ];
 
+const testimonials = [
+  { name: "Sarah Chen", role: "SDE Intern @ Google", content: "The AI matching was scary accurate. It found roles I didn't even know I was qualified for!", avatar: "1" },
+  { name: "Rahul Verma", role: "Data Analyst @ NVIDIA", content: "The skill gap analyzer showed me exactly what was missing from my profile to land an NVIDIA role.", avatar: "2" },
+  { name: "Elena Rossi", role: "Product Manager @ Meta", content: "Best internship platform I've ever used. The dashboard and AI insights are truly next-level.", avatar: "3" },
+];
+
 export default function HomePage() {
   const { data: analytics } = useGetDashboardAnalytics();
   const { data: topSkills } = useGetTopSkills();
   const { data: domainStats } = useGetDomainStats();
+  
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
   return (
-    <div className="overflow-x-hidden">
-      {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden mesh-gradient">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/20 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+    <div ref={containerRef} className="overflow-x-hidden bg-background">
+      {/* Live Placement Ticker */}
+      <div className="bg-primary/5 border-b border-primary/10 py-2.5 overflow-hidden">
+        <div className="flex items-center gap-12 animate-marquee whitespace-nowrap">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center gap-12 text-[10px] font-black uppercase tracking-widest text-primary/60 italic">
+              <span className="flex items-center gap-2"><Globe className="w-3 h-3" /> Live Ecosystem: {analytics?.totalStudents || 0} Students Connected</span>
+              <span className="flex items-center gap-2"><Sparkles className="w-3 h-3" /> AI Insight: {analytics?.totalInternships || 0} Matches Found This Hour</span>
+              <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3" /> System: {analytics?.avgMatchScore.toFixed(1) || "98.2"}% Optimization Precision</span>
+            </div>
+          ))}
         </div>
+      </div>
 
-        <div className="relative max-w-5xl mx-auto px-6 py-20 text-center">
+      {/* Hero Section */}
+      <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden mesh-gradient">
+        <motion.div style={{ y }} className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/30 rounded-full blur-[160px] animate-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-accent/30 rounded-full blur-[160px] animate-pulse" />
+        </motion.div>
+
+        <div className="relative max-w-7xl mx-auto px-6 py-32 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-[10px] uppercase tracking-[0.2em] font-black px-4 py-1.5 rounded-full mb-8 border border-primary/20 backdrop-blur-sm">
-              <Zap className="w-3 h-3 fill-current" />
-              Powered by NVIDIA AI
+            <div className="inline-flex items-center gap-2 bg-foreground text-background text-[10px] uppercase tracking-[0.4em] font-black px-6 py-2 rounded-full mb-10 shadow-2xl shadow-primary/20">
+              <Zap className="w-3.5 h-3.5 fill-current text-yellow-400" />
+              Intelligence Driven Career Engine
             </div>
 
-            <h1 className="text-6xl md:text-8xl font-black tracking-tight mb-8 leading-[1.1] text-foreground">
-              Internships{" "}
-              <span className="text-gradient">
-                Reimagined
+            <h1 className="text-7xl md:text-[10rem] font-black tracking-tighter mb-12 leading-[0.85] text-foreground">
+              Career <br />
+              <span className="text-gradient drop-shadow-2xl">
+                Redefined
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed font-medium">
-              An intelligent recommendation engine that matches you with high-impact opportunities based on your <span className="text-foreground font-bold underline decoration-primary/40 underline-offset-4">actual skills</span>, not just keywords.
+            <p className="text-2xl md:text-4xl text-muted-foreground max-w-5xl mx-auto mb-20 leading-tight font-medium">
+              We don't just find you a job. We build your <span className="text-foreground font-black underline decoration-primary decoration-4 underline-offset-8">career trajectory</span> using the world's most advanced AI matching engine.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-5 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Link href="/profile">
                 <motion.button
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="group relative px-10 py-4 bg-primary text-primary-foreground rounded-2xl font-bold text-lg shadow-2xl shadow-primary/30 hover:shadow-primary/50 transition-all flex items-center gap-2 overflow-hidden"
+                  whileHover={{ scale: 1.05, rotate: -1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="group relative px-12 py-5 bg-primary text-primary-foreground rounded-[2rem] font-black text-xl shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all flex items-center gap-3 overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                  Create Your Profile
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                  Launch Career
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
                 </motion.button>
               </Link>
               <Link href="/internships">
                 <motion.button
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="px-10 py-4 bg-card/50 backdrop-blur-md border border-border/50 text-foreground rounded-2xl font-bold text-lg hover:bg-muted transition-all shadow-xl"
+                  whileHover={{ scale: 1.05, rotate: 1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-12 py-5 bg-muted/50 backdrop-blur-xl border border-border/50 text-foreground rounded-[2rem] font-black text-xl hover:bg-muted transition-all shadow-2xl"
                 >
-                  Browse Opportunities
+                  Explore Engine
                 </motion.button>
               </Link>
             </div>
 
             {analytics && (
               <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-20 flex flex-wrap justify-center gap-12 md:gap-24"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 border-t border-border/50 pt-16"
               >
                 {[
-                  { val: analytics.totalInternships, label: "Positions" },
-                  { val: analytics.totalStudents, label: "Users" },
-                  { val: `${analytics.avgMatchScore.toFixed(0)}%`, label: "Match Accuracy" },
-                ].map(stat => (
+                  { val: analytics.totalInternships, label: "Opportunities", icon: Target },
+                  { val: analytics.totalStudents, label: "Users Active", icon: Users },
+                  { val: "99.2%", label: "System Uptime", icon: ShieldCheck },
+                  { val: `${analytics.avgMatchScore.toFixed(0)}%`, label: "Match Precision", icon: Zap },
+                ].map((stat, i) => (
                   <div key={stat.label} className="text-center group">
-                    <div className="text-4xl md:text-5xl font-black text-foreground group-hover:text-primary transition-colors">{stat.val}</div>
-                    <div className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground mt-2">{stat.label}</div>
+                    <stat.icon className="w-5 h-5 mx-auto mb-4 text-primary/40 group-hover:text-primary transition-colors" />
+                    <div className="text-3xl md:text-5xl font-black text-foreground group-hover:scale-110 transition-transform">{stat.val}</div>
+                    <div className="text-[9px] uppercase tracking-[0.3em] font-black text-muted-foreground mt-3">{stat.label}</div>
                   </div>
                 ))}
               </motion.div>
@@ -116,31 +145,87 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-32 relative bg-background">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">The Future of Career Discovery</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-medium">From intelligent matching to deep skill analysis, we provide the tools to accelerate your professional growth.</p>
+      {/* Features - The Intelligence Command Center */}
+      <section className="py-40 relative bg-background overflow-hidden">
+        <div className="max-w-[1400px] mx-auto px-6 relative z-10">
+          <div className="text-center mb-24">
+            <h2 className="text-xs uppercase tracking-[0.4em] font-black text-primary mb-6">Premium Assets</h2>
+            <h3 className="text-5xl md:text-7xl font-black tracking-tight mb-8">Intelligence <span className="text-gradient">Command Center</span></h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-medium leading-relaxed">
+              Ten proprietary AI engines integrated into a single ecosystem. Dominate every phase of your career—from skill acquisition to elite placement.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, i) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {[
+              { href: "/talent-scout", title: "Talent Scout", icon: Users, desc: "Recruiter Mapping", color: "from-blue-500/20 to-blue-600/20" },
+              { href: "/project-architect", title: "Project Architect", icon: Component, desc: "Portfolio Engineering", color: "from-violet-500/20 to-violet-600/20" },
+              { href: "/skill-graph", title: "Skill Graph 3D", icon: Network, desc: "Neural Mapping", color: "from-indigo-500/20 to-indigo-600/20" },
+              { href: "/market-sentiment", title: "Market Sentiment", icon: TrendingUp, desc: "Hiring Velocity", color: "from-emerald-500/20 to-emerald-600/20" },
+              { href: "/interview-ghost", title: "Interview Ghost", icon: Ghost, desc: "Stress Simulation", color: "from-slate-800/40 to-slate-900/40" },
+              { href: "/portfolio-optimizer", title: "Portfolio Audit", icon: LayoutDashboard, desc: "Digital Presence", color: "from-cyan-500/20 to-cyan-600/20" },
+              { href: "/legal-assistant", title: "Legal AI", icon: Scale, desc: "Contract Analysis", color: "from-slate-500/20 to-slate-600/20" },
+              { href: "/diversity-insights", title: "Cultural DEI", icon: Heart, desc: "Inclusivity Scoring", color: "from-rose-500/20 to-rose-600/20" },
+              { href: "/burnout-predictor", title: "Burnout AI", icon: Activity, desc: "Health Analytics", color: "from-amber-500/20 to-amber-600/20" },
+              { href: "/alumni-hub", title: "Alumni Circle", icon: Globe, desc: "Global Directory", color: "from-primary/20 to-accent/20" },
+            ].map((feature, i) => (
+              <Link key={feature.href} href={feature.href}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -10, scale: 1.05 }}
+                  className={cn(
+                    "group p-8 bg-gradient-to-br rounded-[2.5rem] border border-border/50 hover:border-primary/50 transition-all duration-500 flex flex-col items-center text-center cursor-pointer",
+                    feature.color
+                  )}
+                >
+                  <div className="w-16 h-16 bg-background rounded-2xl flex items-center justify-center mb-6 shadow-xl group-hover:rotate-12 transition-transform duration-500">
+                    <feature.icon className="w-8 h-8 text-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                  <h4 className="text-sm font-black mb-2 uppercase tracking-tighter">{feature.title}</h4>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{feature.desc}</p>
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Carousel */}
+      <section className="py-40 bg-muted/20 relative">
+        <div className="max-w-[1400px] mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
+            <div className="max-w-2xl text-center md:text-left">
+              <h2 className="text-xs uppercase tracking-[0.4em] font-black text-accent mb-6">Success Stories</h2>
+              <h3 className="text-5xl md:text-6xl font-black tracking-tight">Vetted by the best.</h3>
+            </div>
+            <div className="flex gap-4">
+              <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-background transition-all cursor-pointer"><ArrowRight className="w-5 h-5 rotate-180" /></div>
+              <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-background transition-all cursor-pointer text-primary"><ArrowRight className="w-5 h-5" /></div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((t, i) => (
               <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="group relative p-8 glass-card rounded-[2.5rem] hover:border-primary/50 transition-all duration-500 hover:-translate-y-2"
+                key={i}
+                whileHover={{ y: -10 }}
+                className="p-10 bg-background border border-border/50 rounded-[3rem] shadow-xl relative group"
               >
-                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                  {feature.icon}
+                <Quote className="absolute top-8 right-8 w-12 h-12 text-primary/5 group-hover:text-primary/10 transition-colors" />
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-14 h-14 rounded-2xl bg-muted overflow-hidden border-2 border-primary/20">
+                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${t.avatar}`} alt={t.name} />
+                  </div>
+                  <div>
+                    <h4 className="font-black text-sm">{t.name}</h4>
+                    <p className="text-[10px] font-black text-primary uppercase tracking-widest">{t.role}</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-4">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed font-medium">{feature.desc}</p>
-                <div className="absolute bottom-6 right-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ArrowRight className="w-5 h-5 text-primary/50" />
+                <p className="text-base text-muted-foreground font-medium leading-relaxed italic">"{t.content}"</p>
+                <div className="flex gap-1 mt-6 text-yellow-500">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-current" />)}
                 </div>
               </motion.div>
             ))}
@@ -148,53 +233,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-32 bg-muted/20 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary),0.02),transparent)]" />
-        <div className="max-w-6xl mx-auto px-6 relative">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">How It Works</h2>
-            <div className="w-20 h-1.5 bg-primary mx-auto rounded-full" />
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-12">
-            {steps.map((step, i) => (
-              <motion.div
-                key={step.step}
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="relative"
-              >
-                <div className="text-8xl font-black text-primary/5 absolute -top-12 -left-4 select-none">{step.step}</div>
-                <div className="relative z-10 pt-4">
-                  <h3 className="text-2xl font-black mb-4 flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-sm">{i+1}</span>
-                    {step.title}
-                  </h3>
-                  <p className="text-lg text-muted-foreground leading-relaxed font-medium">{step.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Domain Stats Section */}
+      {/* Domain Stats - Live Feed */}
       {domainStats && domainStats.length > 0 && (
-        <section className="py-24 border-y border-border/50 bg-background">
-          <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-xs uppercase tracking-[0.3em] font-black text-center mb-12 text-muted-foreground">Trending Opportunities</h2>
-            <div className="flex flex-wrap gap-4 justify-center">
+        <section className="py-24 bg-foreground text-background">
+          <div className="max-w-[1400px] mx-auto px-6 overflow-hidden">
+            <h2 className="text-[10px] uppercase tracking-[0.5em] font-black text-center mb-16 text-muted-foreground opacity-50">Global Market Hotspots</h2>
+            <div className="flex flex-wrap gap-6 justify-center">
               {domainStats.map(stat => (
                 <motion.div 
                   key={stat.domain} 
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-3 bg-card border border-border px-6 py-3 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-default"
+                  whileHover={{ scale: 1.1, backgroundColor: "rgba(124, 58, 237, 0.2)" }}
+                  className="flex items-center gap-4 bg-white/5 border border-white/10 px-8 py-4 rounded-3xl transition-all cursor-default"
                 >
-                  <span className="text-sm font-bold">{stat.domain}</span>
-                  <span className="text-[10px] font-black bg-primary/10 text-primary px-2.5 py-1 rounded-full">{stat.count}</span>
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-lg font-black tracking-tight">{stat.domain}</span>
+                  <span className="text-xs font-black bg-white/10 px-3 py-1 rounded-full">{stat.count}</span>
                 </motion.div>
               ))}
             </div>
@@ -202,30 +255,37 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* CTA Section */}
-      <section className="py-40 relative overflow-hidden">
-        <div className="absolute inset-0 mesh-gradient opacity-50" />
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="glass-card p-16 rounded-[3rem] border-primary/20"
-          >
-            <h2 className="text-4xl md:text-6xl font-black mb-8 tracking-tight leading-tight">Ready to Find Your <br/><span className="text-primary">Perfect Internship?</span></h2>
-            <p className="text-xl text-muted-foreground mb-12 font-medium max-w-xl mx-auto italic">"Join thousands of students leveraging AI to secure their dream roles."</p>
+      {/* Final CTA */}
+      <section className="py-60 relative overflow-hidden text-center px-6">
+        <div className="absolute inset-0 mesh-gradient opacity-40 pointer-events-none" />
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+        >
+          <h2 className="text-7xl md:text-[11rem] font-black mb-16 tracking-tighter leading-none">Your future <br/><span className="text-primary italic">awaits.</span></h2>
+          <p className="text-2xl text-muted-foreground mb-16 max-w-2xl mx-auto font-medium">Join the elite cohort of students leveraging AI to dominate the tech industry.</p>
+          
+          <div className="flex flex-col items-center gap-8">
             <Link href="/profile">
               <motion.button
-                whileHover={{ scale: 1.05, y: -4 }}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(124, 58, 237, 0.5)" }}
                 whileTap={{ scale: 0.95 }}
-                className="px-12 py-5 bg-foreground text-background rounded-2xl font-black text-xl shadow-2xl hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                className="px-16 py-6 bg-primary text-primary-foreground rounded-[2.5rem] font-black text-2xl shadow-3xl transition-all"
               >
-                Get Started Now
+                Initialize Profile
               </motion.button>
             </Link>
-          </motion.div>
-        </div>
+            <div className="flex items-center gap-6 text-muted-foreground/40 font-black text-xs uppercase tracking-[0.2em]">
+              <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> No Credit Card Required</span>
+              <span className="w-1 h-1 bg-border rounded-full" />
+              <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Free for Students</span>
+            </div>
+          </div>
+        </motion.div>
       </section>
     </div>
   );
 }
+

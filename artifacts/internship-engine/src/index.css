@@ -217,6 +217,14 @@
 @layer utilities {
   input[type="search"]::-webkit-search-cancel-button { @apply hidden; }
 
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
   .glass-card {
     @apply bg-card/60 backdrop-blur-xl border border-card-border shadow-lg;
   }

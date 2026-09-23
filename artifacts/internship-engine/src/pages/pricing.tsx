@@ -16,8 +16,8 @@ const PLANS = [
       "Industry Postings Access",
       "Basic Profile AI Sync",
       "Limited Skill Matching",
-      "Basic Compatibility Score",
-      "Community Support"
+      "Public Alumni Hub (Browse)",
+      "Open Source Hub (Browse)"
     ],
     icon: Rocket,
     color: "text-muted-foreground",
@@ -31,9 +31,9 @@ const PLANS = [
     desc: "Personalized matching for students.",
     features: [
       "Everything in Free",
-      "Real-time Industry Postings",
-      "AI Skill Matcher (Basic)",
-      "Resume Skill Extraction",
+      "AI Talent Scout (Basic)",
+      "Skill Graph 3D (Standard)",
+      "Burnout Predictor (Basic)",
       "Priority Application Tracking"
     ],
     icon: Zap,
@@ -48,11 +48,11 @@ const PLANS = [
     desc: "Advanced prep with AI automation.",
     features: [
       "Everything in Starter",
-      "AI Email Generator Section",
-      "Auto Match Notifications",
-      "AI Sentiment Feedback System",
-      "Mock Interview Questions",
-      "Interview Coach AI"
+      "Project Architect (Unlimited)",
+      "Market Sentiment Analysis",
+      "Portfolio Optimizer (Audit)",
+      "Diversity Insights (Company)",
+      "Interview Ghost (Basic)"
     ],
     icon: Sparkles,
     color: "text-primary",
@@ -67,12 +67,12 @@ const PLANS = [
     desc: "Complete AI career ecosystem.",
     features: [
       "Everything in Pro",
-      "Advanced Chat Bot (Innovate+)",
-      "Complete AI Report Analysis",
-      "AI Model Implementation Logic",
-      "Step-by-step Roadmap Generator",
-      "High-Precision Domain Bridging",
-      "Recruiter Priority Visibility"
+      "Interview Ghost (Elite Persona)",
+      "Legal Assistant (Full Audit)",
+      "Global Alumni Hub (Intros)",
+      "Unlimited AI Synthesis",
+      "Recruiter Priority Visibility",
+      "Elite Mentorship (Unlimited)"
     ],
     icon: BrainCircuit,
     color: "text-accent",

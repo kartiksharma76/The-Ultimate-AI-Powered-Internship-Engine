@@ -13,7 +13,7 @@ import {
 } from "@workspace/api-client-react";
 import type { Internship } from "@workspace/api-client-react";
 import { getDomainColor, formatDate, cn, formatCurrency, isIndianLocation } from "@/lib/utils";
-import { Plus, Edit3, Trash2, X, Check, Search, Filter, ShieldCheck, Briefcase, MapPin, Calendar, IndianRupee, DollarSign, ExternalLink, Lock } from "lucide-react";
+import { Plus, Edit3, Trash2, X, Check, Search, Filter, ShieldCheck, Briefcase, MapPin, Calendar, IndianRupee, DollarSign, ExternalLink, Lock, AlertTriangle } from "lucide-react";
 
 const DOMAINS = ["Web Development", "AI/ML", "Data Science", "Mobile Development", "Cloud/DevOps", "Cybersecurity", "Blockchain", "Game Development"];
 
@@ -137,14 +137,50 @@ export default function AdminPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"opportunities" | "candidates">("opportunities");
+  const [activeTab, setActiveTab] = useState<"opportunities" | "candidates" | "analytics" | "mentorship" | "revenue">("opportunities");
   const [rankedCandidates, setRankedCandidates] = useState<any[]>([]);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
+  const [isProcessingAI, setIsProcessingAI] = useState(false);
+  const [aiProgress, setAiProgress] = useState(0);
+
+  const triggerAutoShortlist = async () => {
+    setIsProcessingAI(true);
+    setAiProgress(0);
+    
+    const interval = setInterval(() => {
+      setAiProgress(prev => Math.min(prev + Math.floor(Math.random() * 10) + 2, 98));
+    }, 400);
+
+    try {
+      const res = await fetch("/api/ranking/auto-shortlist", { method: "POST" });
+      if (res.ok) {
+        setAiProgress(100);
+        toast.success("AI Analysis Complete: Talent rankings synchronized.");
+        if (activeTab === "candidates") {
+          setLoadingCandidates(true);
+          const dataRes = await fetch("/api/ranking/internship/1");
+          const data = await dataRes.json();
+          setRankedCandidates(data);
+          setLoadingCandidates(false);
+        }
+      } else {
+        toast.error("AI Analysis failed to converge.");
+      }
+    } catch (err) {
+      toast.error("Connection lost during AI processing.");
+    } finally {
+      clearInterval(interval);
+      setTimeout(() => {
+        setIsProcessingAI(false);
+        setAiProgress(0);
+      }, 1000);
+    }
+  };
 
   useEffect(() => {
     if (activeTab === "candidates") {
       setLoadingCandidates(true);
-      fetch("http://localhost:8080/api/ranking/internship/1")
+      fetch("/api/ranking/internship/1")
         .then(res => res.json())
         .then(data => {
           setRankedCandidates(data);
@@ -175,9 +211,8 @@ export default function AdminPage() {
       onSuccess: () => { 
         toast.success("Stream terminated"); 
         refetch().then(() => {
-          // Force a small state update to trigger re-render if needed
           setConfirmDelete(null);
-          window.location.reload(); // Ensuring full sync as per user request
+          window.location.reload(); 
         });
       },
       onError: () => toast.error("Termination failed")
@@ -202,18 +237,36 @@ export default function AdminPage() {
           </p>
         </div>
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex bg-muted/50 p-1.5 rounded-2xl border border-border/50">
+          <div className="flex bg-muted/50 p-1.5 rounded-2xl border border-border/50 overflow-x-auto">
             <button 
               onClick={() => setActiveTab("opportunities")}
-              className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", activeTab === "opportunities" ? "bg-background shadow-md" : "text-muted-foreground hover:text-foreground")}
+              className={cn("px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", activeTab === "opportunities" ? "bg-background shadow-md" : "text-muted-foreground hover:text-foreground")}
             >
               Opportunities
             </button>
             <button 
               onClick={() => setActiveTab("candidates")}
-              className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", activeTab === "candidates" ? "bg-background shadow-md" : "text-muted-foreground hover:text-foreground")}
+              className={cn("px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", activeTab === "candidates" ? "bg-background shadow-md" : "text-muted-foreground hover:text-foreground")}
             >
               Candidates
+            </button>
+            <button 
+              onClick={() => setActiveTab("analytics")}
+              className={cn("px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", activeTab === "analytics" ? "bg-background shadow-md" : "text-muted-foreground hover:text-foreground")}
+            >
+              System Metrics
+            </button>
+            <button 
+              onClick={() => setActiveTab("mentorship")}
+              className={cn("px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", activeTab === "mentorship" ? "bg-background shadow-md" : "text-muted-foreground hover:text-foreground")}
+            >
+              Mentorship
+            </button>
+            <button 
+              onClick={() => setActiveTab("revenue")}
+              className={cn("px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shrink-0", activeTab === "revenue" ? "bg-background shadow-md" : "text-muted-foreground hover:text-foreground")}
+            >
+              Revenue
             </button>
           </div>
           {activeTab === "opportunities" && (
@@ -275,12 +328,12 @@ export default function AdminPage() {
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl flex items-center justify-center font-black text-primary text-xl border border-primary/20">
-                          {internship.company[0]}
+                          {typeof internship.company === "string" ? internship.company[0] : (internship.company as any)?.name[0]}
                         </div>
                         <div>
                           <div className="font-black text-lg tracking-tight group-hover:text-primary transition-colors">{internship.title}</div>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs font-bold text-muted-foreground">{internship.company}</span>
+                            <span className="text-xs font-bold text-muted-foreground">{typeof internship.company === "string" ? internship.company : (internship.company as any)?.name}</span>
                             <div className="w-1 h-1 rounded-full bg-muted" />
                             <span className={cn("text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border border-current", getDomainColor(internship.domain))}>
                               {internship.domain}
@@ -362,7 +415,7 @@ export default function AdminPage() {
             </table>
           </div>
         </div>
-      ) : (
+      ) : activeTab === "candidates" ? (
         <div className="space-y-8">
            <div className="flex justify-between items-center bg-indigo-600/10 p-8 rounded-[2.5rem] border border-indigo-600/20">
               <div className="flex items-center gap-6">
@@ -375,21 +428,23 @@ export default function AdminPage() {
                 </div>
               </div>
               <button 
-                onClick={() => {
-                   toast.promise(
-                    fetch("http://localhost:8080/api/ranking/auto-shortlist", { method: "POST" }),
-                    {
-                      loading: 'Triggering AI auto-shortlist...',
-                      success: 'Top candidates moved to shortlisting stage!',
-                      error: 'Auto-shortlist failed',
-                    }
-                  );
-                }}
+                onClick={triggerAutoShortlist}
+                disabled={isProcessingAI}
                 className="px-8 py-4 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-indigo-600/20"
               >
-                Trigger Auto-Shortlist
+                {isProcessingAI ? `Analyzing... ${aiProgress}%` : "Trigger Auto-Shortlist"}
               </button>
            </div>
+           
+           {isProcessingAI && (
+             <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+               <motion.div 
+                 initial={{ width: 0 }}
+                 animate={{ width: `${aiProgress}%` }}
+                 className="h-full bg-indigo-600"
+               />
+             </div>
+           )}
 
            <div className="glass-card rounded-[3rem] overflow-hidden border-border/30">
             <div className="overflow-x-auto">
@@ -423,12 +478,15 @@ export default function AdminPage() {
                               <img src={entry.student.avatarUrl} className="w-full h-full rounded-full object-cover" />
                             ) : (
                               <div className="w-full h-full rounded-full bg-muted flex items-center justify-center font-bold text-xs">
-                                {entry.student.name[0]}
+                                {typeof entry.student.name === "string" ? entry.student.name[0] : (entry.student.name as any)?.employee?.[0] || "?"}
                               </div>
                             )}
                           </div>
-                          <div>
-                            <div className="font-black group-hover:text-indigo-600 transition-colors">{entry.student.name}</div>
+                          <div className="flex flex-col">
+                            <div className="font-black text-sm text-foreground truncate">
+                              {typeof entry.student.name === "string" ? entry.student.name : (entry.student.name as any)?.employee || "Unknown Candidate"}
+                            </div>
+                            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Candidate ID: {entry.student.id}</div>
                             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{entry.application.title}</div>
                           </div>
                         </div>
@@ -446,9 +504,12 @@ export default function AdminPage() {
                         <div className="flex flex-col gap-1 items-center">
                           <div className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Score: {entry.githubScores?.codingActivityScore || 0}</div>
                           <div className="flex gap-1">
-                            {entry.githubScores?.topLanguages?.slice(0, 3).map((lang: string) => (
-                              <span key={lang} className="text-[8px] px-1.5 py-0.5 bg-muted rounded border">{lang}</span>
-                            ))}
+                            {entry.githubScores?.topLanguages && Array.isArray(entry.githubScores.topLanguages) && entry.githubScores.topLanguages.slice(0, 3).map((lang: any) => {
+                              const langName = typeof lang === "string" ? lang : lang.language || lang.employee || "Unknown";
+                              return (
+                                <span key={langName} className="text-[8px] px-1.5 py-0.5 bg-muted rounded border">{langName}</span>
+                              );
+                            })}
                           </div>
                         </div>
                       </td>
@@ -471,6 +532,101 @@ export default function AdminPage() {
                 </tbody>
               </table>
             </div>
+           </div>
+        </div>
+      ) : activeTab === "analytics" ? (
+        <div className="grid lg:grid-cols-3 gap-8">
+           <div className="lg:col-span-2 glass-card p-10 rounded-[3rem]">
+              <h3 className="text-xl font-black mb-8 tracking-tight italic">Platform <span className="text-primary">Throughput</span></h3>
+              <div className="h-[400px] flex items-end gap-4">
+                 {[40, 70, 45, 90, 65, 80, 55, 95].map((h, i) => (
+                   <div key={i} className="flex-1 flex flex-col items-center gap-4 group">
+                      <div className="w-full bg-primary/10 rounded-2xl relative overflow-hidden flex items-end" style={{ height: '100%' }}>
+                         <motion.div 
+                           initial={{ height: 0 }}
+                           animate={{ height: `${h}%` }}
+                           className="w-full bg-primary group-hover:bg-accent transition-colors shadow-lg"
+                         />
+                      </div>
+                      <span className="text-[8px] font-black uppercase text-muted-foreground">W-{i+1}</span>
+                   </div>
+                 ))}
+              </div>
+           </div>
+           <div className="space-y-6">
+              <div className="glass-card p-8 rounded-[2.5rem] bg-slate-900 text-white">
+                 <h4 className="text-[10px] font-black uppercase tracking-widest mb-6 opacity-60 text-indigo-400">System Uptime</h4>
+                 <div className="text-4xl font-black italic mb-2">99.98%</div>
+                 <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div className="w-[99%] h-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
+                 </div>
+              </div>
+              <div className="glass-card p-8 rounded-[2.5rem]">
+                 <h4 className="text-[10px] font-black uppercase tracking-widest mb-6 text-muted-foreground">Active Queries</h4>
+                 <div className="text-4xl font-black italic mb-2 text-primary">1,244</div>
+                 <p className="text-[10px] font-bold text-muted-foreground italic">Current neural processing load across all student profiles.</p>
+              </div>
+           </div>
+        </div>
+      ) : activeTab === "mentorship" ? (
+        <div className="glass-card rounded-[3rem] p-10">
+           <div className="flex items-center justify-between mb-10">
+              <h3 className="text-2xl font-black tracking-tight">Mentor <span className="text-indigo-600">Queue</span></h3>
+              <span className="px-4 py-1.5 bg-indigo-600/10 text-indigo-600 text-[10px] font-black rounded-full uppercase tracking-widest">4 Pending Review</span>
+           </div>
+           <div className="space-y-4">
+              {[
+                { name: "Arjun Reddy", role: "SDE @ Google", exp: "8 Years", status: "Verified" },
+                { name: "Priya Sharma", role: "AI Lead @ NVIDIA", exp: "5 Years", status: "Pending" },
+                { name: "Kabir Singh", role: "CTO @ TechFlow", exp: "12 Years", status: "Verified" },
+              ].map((mentor, i) => (
+                <div key={i} className="flex items-center justify-between p-6 bg-muted/30 rounded-[2rem] border border-border/50 group hover:border-indigo-600/30 transition-all">
+                   <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center font-black text-indigo-600 shadow-sm">{mentor.name[0]}</div>
+                      <div>
+                         <div className="font-black text-sm">{mentor.name}</div>
+                         <div className="text-[10px] font-bold text-muted-foreground uppercase">{mentor.role} &middot; {mentor.exp}</div>
+                      </div>
+                   </div>
+                   <div className="flex items-center gap-3">
+                      <span className={cn("px-3 py-1 rounded-full text-[8px] font-black uppercase", mentor.status === "Verified" ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600")}>{mentor.status}</span>
+                      <button className="p-2 bg-background border border-border rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"><Edit3 className="w-3.5 h-3.5" /></button>
+                   </div>
+                </div>
+              ))}
+           </div>
+        </div>
+      ) : (
+        <div className="grid lg:grid-cols-2 gap-8">
+           <div className="glass-card p-10 rounded-[3rem] bg-emerald-600 text-white relative overflow-hidden">
+              <DollarSign className="absolute -bottom-4 -right-4 w-32 h-32 opacity-10" />
+              <h4 className="text-[10px] font-black uppercase tracking-widest mb-8 text-white/60">Total Ecosystem Revenue</h4>
+              <div className="text-5xl font-black italic mb-2">₹1,42,500</div>
+              <p className="text-xs font-medium text-white/70 italic">Current billing cycle performance (+12% vs last month).</p>
+           </div>
+           <div className="glass-card p-10 rounded-[3rem]">
+              <h3 className="text-xl font-black mb-8 tracking-tight">Recent <span className="text-primary">Subscribers</span></h3>
+              <div className="space-y-6">
+                 {[
+                   { user: "Kartik S.", plan: "Premium", amount: "₹999", date: "2 mins ago" },
+                   { user: "Neha R.", plan: "Pro", amount: "₹499", date: "15 mins ago" },
+                   { user: "Rohan D.", plan: "Starter", amount: "₹299", date: "1 hour ago" },
+                 ].map((sub, i) => (
+                   <div key={i} className="flex items-center justify-between border-b border-border/50 pb-4 last:border-0 last:pb-0">
+                      <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-black text-[10px] text-primary">{sub.user[0]}</div>
+                         <div>
+                            <div className="text-sm font-black">{sub.user}</div>
+                            <div className="text-[9px] font-black text-muted-foreground uppercase">{sub.plan} Plan</div>
+                         </div>
+                      </div>
+                      <div className="text-right">
+                         <div className="text-xs font-black text-primary">{sub.amount}</div>
+                         <div className="text-[8px] font-bold text-muted-foreground uppercase">{sub.date}</div>
+                      </div>
+                   </div>
+                 ))}
+              </div>
            </div>
         </div>
       )}

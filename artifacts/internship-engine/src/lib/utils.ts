@@ -46,9 +46,10 @@ export function isIndianLocation(location: string = "") {
   return INDIAN_CITIES.some(city => loc.includes(city));
 }
 
-export function formatCurrency(amount: string, location: string = "") {
-  if (!amount) return "Competitive";
-  const cleanAmount = amount.replace(/[₹$]/g, "").trim();
+export function formatCurrency(amount: string | number, location: string = "") {
+  if (amount == null || amount === "") return "Competitive";
+  const amountStr = String(amount);
+  const cleanAmount = amountStr.replace(/[₹$]/g, "").trim();
   
   if (isIndianLocation(location)) {
     return `₹${cleanAmount}`;

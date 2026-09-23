@@ -12,6 +12,7 @@ import githubRouter from "./github";
 import rankingRouter from "./ranking";
 import assessmentRouter from "./assessment";
 import interviewRouter from "./interview";
+import eliteInsightsRouter from "./elite_insights";
 
 const router: IRouter = Router();
 
@@ -28,5 +29,6 @@ router.use(githubRouter);
 router.use(rankingRouter);
 router.use(assessmentRouter);
 router.use(interviewRouter);
+router.use(eliteInsightsRouter);
 
 export default router;

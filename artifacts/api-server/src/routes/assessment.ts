@@ -1,13 +1,13 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
-import { assessmentsTable, studentsTable } from "@workspace/db/schema";
+import { assessmentsTable, studentsTable, internshipsTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 
 const router: IRouter = Router();
 
 // Generate adaptive test questions
 router.get("/assessments/generate", async (req, res) => {
-  const { type, difficulty, studentId } = req.query;
+  const { type, difficulty, studentId, internshipId } = req.query;
   const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;
 
   try {
@@ -18,19 +18,27 @@ router.get("/assessments/generate", async (req, res) => {
         studentSkills = student.skills.join(", ");
       }
     }
+    
+    let internshipTitle = "Technical";
+    if (internshipId) {
+      const [internship] = await db.select().from(internshipsTable).where(eq(internshipsTable.id, parseInt(internshipId as string)));
+      if (internship) {
+        internshipTitle = internship.title ?? "Technical";
+      }
+    }
 
     if (NVIDIA_API_KEY && (type === "coding" || type === "mcq")) {
       const prompt = type === "coding" 
-        ? `Generate a ${difficulty} level coding problem for an internship assessment. 
+        ? `Generate a ${difficulty} level coding problem for a ${internshipTitle} internship. 
            The student has these skills: ${studentSkills}. 
-           The problem should be relevant to their skills if possible, or a general data structures/algorithms problem.
            Return ONLY a JSON object with 'title', 'description', 'constraints', and 'exampleCases' (array).`
-        : `Generate exactly 5 ${difficulty} level technical Multiple Choice Questions (MCQs) for a student with these skills: ${studentSkills}. 
+        : `Generate exactly 5 ${difficulty} level technical Multiple Choice Questions (MCQs) for a ${internshipTitle} role. 
+           The student has these skills: ${studentSkills}. 
            Return ONLY a valid JSON object with a 'questions' array. 
            Each item MUST have: 'id' (number), 'question' (string), 'options' (array of 4 strings), and 'correctIndex' (number 0-3).
-           Do NOT include any markdown formatting or explanation outside the JSON.`;
+           CRITICAL: Output ONLY raw JSON, no markdown or backticks.`;
       
-      console.log(`[AI Assessment] Generating ${type} questions...`);
+      console.log(`[AI Assessment] Generating ${type} questions for ${internshipTitle}...`);
 
       const aiResponse = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
         method: "POST",
@@ -41,14 +49,14 @@ router.get("/assessments/generate", async (req, res) => {
         body: JSON.stringify({
           model: "meta/llama-3.1-8b-instruct",
           messages: [{ role: "system", content: "You are a technical interviewer. You output only pure JSON." }, { role: "user", content: prompt }],
-          temperature: 0.1, // Lower temperature for more consistent JSON
+          temperature: 0.1,
         }),
       });
 
       if (aiResponse.ok) {
         const data = await aiResponse.json() as any;
         const aiText = data.choices[0]?.message?.content?.trim() ?? "{}";
-        console.log(`[AI Assessment] Received response from AI.`);
+        console.log(`[AI Assessment] Raw Response:`, aiText);
         
         const jsonMatch = aiText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
@@ -80,7 +88,7 @@ router.get("/assessments/generate", async (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       problem: {
         title: "Two Sum",
         description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
@@ -89,7 +97,7 @@ router.get("/assessments/generate", async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ error: "Failed to generate assessment" });
+    return res.status(500).json({ error: "Failed to generate assessment" });
   }
 });
 

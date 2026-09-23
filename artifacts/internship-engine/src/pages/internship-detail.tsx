@@ -121,13 +121,15 @@ export default function InternshipDetailPage() {
           </div>
 
           <div className="flex flex-col md:flex-row gap-6 pt-10 border-t border-border/50">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex-1 py-5 bg-foreground text-background rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl hover:shadow-primary/40 transition-all flex items-center justify-center gap-3"
-            >
-              Initialize Application <ChevronRight className="w-4 h-4" />
-            </motion.button>
+            <Link href={`/internships?apply=${internship.id}`} className="flex-1">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full py-5 bg-foreground text-background rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl hover:shadow-primary/40 transition-all flex items-center justify-center gap-3"
+              >
+                Initialize Application <ChevronRight className="w-4 h-4" />
+              </motion.button>
+            </Link>
             <Link href={`/recommendations/${studentId}`} className="flex-1">
               <motion.button
                 whileHover={{ scale: 1.05 }}

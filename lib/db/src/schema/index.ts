@@ -7,3 +7,4 @@ export * from "./gamification";
 export * from "./github_metrics";
 export * from "./assessments";
 export * from "./interviews";
+export * from "./elite_insights";

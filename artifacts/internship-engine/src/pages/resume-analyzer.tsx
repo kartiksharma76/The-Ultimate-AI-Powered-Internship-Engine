@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   FileText, Send, Sparkles, BrainCircuit, ShieldCheck, 
   Search, MessageSquare, ArrowLeft, UploadCloud, CheckCircle2,
-  AlertCircle, ChevronRight, Download, History, Target
+  AlertCircle, ChevronRight, Download, History, Target, Zap
 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
@@ -33,6 +33,21 @@ export default function ResumeAnalyzerPage() {
   const [hasResume, setHasResume] = useState(false);
   const [resumeData, setResumeData] = useState<any>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Hyper-Optimizer states
+  const [rewriteInput, setRewriteInput] = useState("");
+  const [isRewriting, setIsRewriting] = useState(false);
+  const [optimizedResult, setOptimizedResult] = useState("");
+
+  const handleRewrite = () => {
+    if (!rewriteInput.trim()) return;
+    setIsRewriting(true);
+    // Simulation of AI rewrite
+    setTimeout(() => {
+      setOptimizedResult("Architected and deployed a highly scalable microservices infrastructure using Kubernetes and AWS, reducing latency by 35% and improving system reliability for 10k+ concurrent users.");
+      setIsRewriting(false);
+    }, 1500);
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -183,6 +198,55 @@ export default function ResumeAnalyzerPage() {
                 animate={{ width: hasResume ? `${resumeData?.score || 0}%` : 0 }}
                 className="h-full bg-primary" 
               />
+            </div>
+          </div>
+
+          <div className="glass-card p-6 rounded-[2.5rem] border-violet-500/30 bg-violet-500/5 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Sparkles className="w-12 h-12 text-violet-500" />
+            </div>
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-violet-500 mb-4 flex items-center gap-2">
+              <Zap className="w-4 h-4" />
+              Hyper-Optimizer
+            </h3>
+            <div className="space-y-4 relative z-10">
+              <textarea 
+                value={rewriteInput}
+                onChange={(e) => setRewriteInput(e.target.value)}
+                placeholder="Paste a bullet point to optimize..."
+                className="w-full bg-background/50 border border-violet-500/20 rounded-xl p-3 text-[10px] font-medium min-h-[80px] outline-none focus:border-violet-500/50 transition-all resize-none"
+              />
+              <button 
+                onClick={handleRewrite}
+                disabled={!rewriteInput.trim() || isRewriting}
+                className="w-full py-2 bg-violet-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg shadow-violet-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+              >
+                {isRewriting ? "Optimizing..." : "Auto-Rewrite"}
+              </button>
+              
+              <AnimatePresence>
+                {optimizedResult && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl"
+                  >
+                    <div className="text-[8px] font-black uppercase text-emerald-600 mb-1 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> Optimized Result
+                    </div>
+                    <p className="text-[10px] font-bold leading-relaxed">{optimizedResult}</p>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(optimizedResult);
+                        toast.success("Copied to clipboard!");
+                      }}
+                      className="mt-2 text-[8px] font-black uppercase text-primary hover:underline"
+                    >
+                      Copy to Clipboard
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 

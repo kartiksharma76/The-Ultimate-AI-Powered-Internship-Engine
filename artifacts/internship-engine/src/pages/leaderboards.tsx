@@ -127,7 +127,7 @@ export default function LeaderboardsPage() {
                         <img src={entry.avatarUrl} alt={entry.name} className="w-full h-full rounded-full object-cover" />
                       ) : (
                         <div className="w-full h-full rounded-full bg-muted flex items-center justify-center text-xl font-black">
-                          {entry.name[0]}
+                          {typeof entry.name === "string" ? entry.name[0] : (entry.name as any)?.employee?.[0] || "?"}
                         </div>
                       )}
                     </div>
@@ -135,14 +135,16 @@ export default function LeaderboardsPage() {
                       #{i + 1}
                     </div>
                   </div>
-                  <h4 className="font-black text-lg mb-1">{entry.name}</h4>
+                  <h4 className="font-black text-lg mb-1">
+                    {typeof entry.name === "string" ? entry.name : (entry.name as any)?.employee || "Unknown Developer"}
+                  </h4>
                   <div className="flex items-center gap-2 mb-4">
                     <Zap className="w-3 h-3 text-primary fill-primary" />
                     <span className="text-xs font-black text-primary uppercase tracking-widest">{entry.xpPoints.toLocaleString()} XP</span>
                   </div>
                   <div className="flex gap-1">
                     {entry.badges?.slice(0, 3).map((badge, bi) => (
-                      <div key={bi} className="w-8 h-8 bg-muted/50 rounded-lg flex items-center justify-center border border-border/50" title={badge}>
+                      <div key={bi} className="w-8 h-8 bg-muted/50 rounded-lg flex items-center justify-center border border-border/50" title={typeof badge === 'string' ? badge : JSON.stringify(badge)}>
                         <Shield className="w-4 h-4 text-muted-foreground" />
                       </div>
                     ))}
@@ -190,12 +192,14 @@ export default function LeaderboardsPage() {
                                 <img src={entry.avatarUrl} alt={entry.name} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center font-bold text-muted-foreground">
-                                  {entry.name[0]}
+                                  {typeof entry.name === "string" ? entry.name[0] : (entry.name as any)?.employee?.[0] || "?"}
                                 </div>
                               )}
                             </div>
                             <div>
-                              <div className="font-black group-hover:text-primary transition-colors">{entry.name}</div>
+                              <div className="font-black group-hover:text-primary transition-colors">
+                                {typeof entry.name === "string" ? entry.name : (entry.name as any)?.employee || "Unknown"}
+                              </div>
                               <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                                 {entry.studentId === 1 ? "Elite Neural Architect" : "Candidate"}
                               </div>
